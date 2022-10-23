@@ -1,13 +1,11 @@
-l = m => console.log(m);
-
-const ALLOW_IMAGE_EXT = ['jpg', 'png', 'jpeg', 'webp'];
-const ImageFilter = require('./ImageFilter');
+const ALLOW_IMAGE_EXT = ["jpg", "png", "jpeg", "webp"];
+const ImageFilter = require("./ImageFilter");
 
 const getExtByPath = (path) => {
     path = path.toLowerCase();
     for (let ext of ALLOW_IMAGE_EXT) {
         if (path.endsWith(`.${ext}`)) {
-            return ext.replace('jpeg', 'jpg');
+            return ext.replace("jpeg", "jpg");
         }
     }
     return false;
@@ -19,35 +17,30 @@ const parseUri = (uri) => {
         return false;
     }
 
-    // Parse path of origin image
-    let originImagePath = uri.replace(match[0], '');
+    let originImagePath = uri.replace(match[0], "");
     let originImageExt = getExtByPath(originImagePath);
     if (!originImageExt) {
-        l('originImagePath empty');
         return false;
     }
-    l(originImageExt);
-    l(originImagePath);
 
     match = match[1];
 
-    // Parse target format ext
     let targetFormatExt = originImageExt;
-    if (match.indexOf('.') !== -1) {
-        let matchArr = match.split('.');
+    if (match.indexOf(".") !== -1) {
+        targetFormatExtDefined = true;
+        let matchArr = match.split(".");
         let format = matchArr.pop();
         if (format) {
             format = format.toLowerCase();
         }
         if (ALLOW_IMAGE_EXT.includes(format)) {
             targetFormatExt = format;
-            match = matchArr.join('.'); // Remove the ext
+            match = matchArr.join(".");
         }
     }
 
     let filterMap = {};
-    // Deal with params
-    match.split('_').map(item => {
+    match.split("_").map((item) => {
         let filterEntity = ImageFilter.parseFilterParam(item);
         if (filterEntity) {
             filterMap[filterEntity.name] = filterEntity.value;
@@ -58,11 +51,11 @@ const parseUri = (uri) => {
         originImagePath,
         originImageExt,
         targetFormatExt,
-        filterMap
+        filterMap,
     };
 };
 
 module.exports = {
     parseUri,
-    getExtByPath
+    getExtByPath,
 };

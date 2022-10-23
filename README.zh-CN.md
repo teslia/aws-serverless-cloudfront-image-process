@@ -1,16 +1,37 @@
 [English](./README.md) | 简体中文
 
-# 在AWS使用Lambda@Edge处理图片的最佳实践
+# 在AWS Cloudfront中使用Lambda@Edge处理图片
 
-> 包含 docker 环境和简单的图片处理代码；欢迎大家 star、fork 或提交 pr 以改善该实践
+> 包含简单的图片处理代码；欢迎大家 star、fork 或提交 pr 以改善该实践
 
-## 这是什么
+## 这是什么？
 类似阿里云 OSS 的图片处理服务、腾讯云的数据万象。
 
 因为 AWS 并没有单独将图片处理单独发布服务，只提供了 lambda 配合 CloudFront 用于处理这类需求。因此我设计了一套方案用于实现图片处理的需求
 
 有了本方案，前端可以在原有的 cdn 图片链接后面拼接参数，获取对应的缩略图、加水印等图片处理需求。
+## 说明
+1. 本项目是基于[foamzou](https://github.com/foamzou/aws-lambda-edge-image-process)版本基础上修改而来，非常感谢原作者！
+2. 本项目已经加入[serverless](https://www.serverless.com/)支持，在部署之前，请务必修改`serverless.yml`中的`distributionID`以及其他你认为需要修改的配置。
+3. 原作者中的使用Docker进行编译的步骤已经在本项目中去除。
+4. 原理、说明请移步原作者的文章[《在AWS使用Lambda@Edge处理图片的最佳实践》](https://foamzou.com/2020/08/30/best-practices-for-using-lambdaedge-to-process-images-on-aws/)浏览。
 
+## 安装
+由于sharp包需要指定环境，而lambda使用的是linux x64环境，为了解决这个问题，我已经在`package.json`中加入了对应的安装命令，请在部署项目之前，一定要使用下面的命令进行一次安装。
+```
+npm run install-lambda
+```
+
+## 部署
+直接按照serverless的方式进行部署，部署之前，请确定配置（aws配置、serverless.yml配置文件等）是否正确！
+如果你还没有安装过serverless，需要使用下面的命令进行全局安装。
+```
+npm install -g serverless
+```
+使用下面的命令进行部署
+```
+serverless deploy
+```
 ## 前端使用说明
 url 构成：`https://cdn域名/文件名@<参数值1><参数名1>_<参数值2><参数名2>.期望转换的文件格式`
 
@@ -28,6 +49,3 @@ url 构成：`https://cdn域名/文件名@<参数值1><参数名1>_<参数值2><
 
 ### 注意
 当总面积超过 4096px * 4096px，或者单边长度超过 4096px * 4，那么不会对图片进行缩放处理
-
-## 具体方案和部署步骤
-请参考 <a href="https://foamzou.com/2020/08/30/best-practices-for-using-lambdaedge-to-process-images-on-aws/" target="_blank">《在AWS使用Lambda@Edge处理图片的最佳实践》</a>

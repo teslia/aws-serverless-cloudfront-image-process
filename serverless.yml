@@ -1,0 +1,40 @@
+service: image-process
+plugins:
+  - serverless-plugin-existing-cloudfront-lambda-edge
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  timeout: 30
+  memorySize: 256
+  iam:
+    role:
+      name: ImageProcessLambdaRole
+      managedPolicies:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AWSLambda_ReadOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+resources:
+  Resources:
+    ImageProcessLambdaRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+                  - edgelambda.amazonaws.com
+              Action: sts:AssumeRole
+functions:
+  ImageProcess:
+    handler: index.handler
+    description: Image process for CloudFront
+    memorySize: 256
+    timeout: 30
+    lambdaAtEdge:
+      distributionID: <Change here to actual CloudFront DistributionID>
+      eventType: 'origin-response'
+      
