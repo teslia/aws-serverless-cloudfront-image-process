@@ -65,7 +65,9 @@ const handleOriginResponse = async (request, response) => {
         return false;
     }
 
-    await uploadToS3(bucketName, saveObjKey, buffer, contentType);
+    try {
+        await uploadToS3(bucketName, saveObjKey, buffer, contentType);
+    } catch {}
 
     return generateResponse(response, buffer, contentType);
 };
